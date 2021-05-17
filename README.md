@@ -35,7 +35,7 @@ mvn clean verify
 
 * Run Application 类
 
-* 访问 [localhost:8080//rank.htm](localhost:8080//rank.htm) 就可以可以运行了
+* 访问 [localhost:8080/rank.htm](localhost:8080/rank.htm) 就可以可以运行了
 
 
 运行结果如下图：
