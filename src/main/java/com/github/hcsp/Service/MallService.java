@@ -1,5 +1,6 @@
 package com.github.hcsp.Service;
 
+import com.github.hcsp.config.Cache;
 import com.github.hcsp.dao.MallDao;
 import com.github.hcsp.entity.GoodRank;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,10 @@ public class MallService {
     public MallService(MallDao mallDao) {
         this.mallDao = mallDao;
     }
+
+    @Cache
     public List<GoodRank> getGoodAmountRank() {
-         return mallDao.getGoodAmountRank();
+        return mallDao.getGoodAmountRank();
 
     }
 }

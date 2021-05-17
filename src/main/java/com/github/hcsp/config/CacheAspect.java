@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
 import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
@@ -15,10 +14,10 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CacheAspect {
 
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Inject
-    public CacheAspect(RedisTemplate redisTemplate) {
+    public CacheAspect(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -26,17 +25,15 @@ public class CacheAspect {
     public Object cache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         String name = signature.getName();
-        int cacheSeconds = proceedingJoinPoint.getTarget()
-                .getClass()
-                .getMethod(name, signature.getParameterTypes())
-                .getAnnotation(Cache.class).cacheSeconds();
-
-        ValueOperations opsForValue = redisTemplate.opsForValue();
-        Object cachedValue = opsForValue.get(name);
-        if (cachedValue == null) {
-            cachedValue = proceedingJoinPoint.proceed();
-            opsForValue.set(name, cachedValue, cacheSeconds, TimeUnit.SECONDS);
+        Object cachedValue = redisTemplate.opsForValue().get(name);
+        if (cachedValue != null) {
+            System.out.println("Get value from cache");
+            return cachedValue;
+        } else {
+            System.out.println("Get value from database");
+            Object realValue = proceedingJoinPoint.proceed();
+            redisTemplate.opsForValue().set(name, realValue,1L, TimeUnit.SECONDS);
+            return realValue;
         }
-        return cachedValue;
     }
 }

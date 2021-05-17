@@ -1,6 +1,8 @@
 package com.github.hcsp.entity;
 
-public class GoodRank {
+import java.io.Serializable;
+
+public class GoodRank implements Serializable {
     private String name;
     private Integer amount;
 
