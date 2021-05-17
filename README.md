@@ -14,6 +14,10 @@ git clone git@github.com:DieselNiu/Commodity_Rankings.git
 ```shell
 docker run --name rankings -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 MYSQL_DATABASE=mall -d mysql:8.0
 ```
+从 Docker 启动redis：
+```shell
+docker run -p 6379:6379 -d redis 
+```
 
 使用 IDEA 打开项目，刷新 Maven，再使用开源数据库迁移工具 Flyway 完成自动建表工作：
 
