@@ -1,66 +1,41 @@
-# Spring+AOP+Redis+MySQL练习
+ How to build
 
-- 将`src/main/resources/db/migration`中的数据导入本地的MySQL数据库`jdbc:mysql://localhost:3306/mall?characterEncoding=utf-8`中。
-- 通过编写SQL查询该MySQL数据库的内容，获取商品排行榜，即商品按照其销售金额倒序的表格，如下所示。
-- 该排行榜页面使用Redis进行缓存，缓存时间1s——即，在同一秒中，无论有多少次页面访问请求，都只查数据库一次，其他数据都从Redis缓存获取。
+clone 项目至本地目录：
 
-你最终渲染成的页面应该大致长这个样子：
-
-| 排名 | 商品名 | 成交金额 |
-|------|--------|----------|
-| 1    | 商品1  | 1000     |
-| 2    | 商品2  | 200      |
-| 3    | ...    | ...      |
-
+```shell
+git clone git@github.com:DieselNiu/Commodity_Rankings.git
 ```
-<!DOCTYPE html>
-<html>
-<head>
-<title>商品排行榜</title>
-<style>
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
 
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
+从 Docker 启动 MySQL 数据库：
 
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-</style>
-</head>
-<body>
+* [Docker 下载地址](https://www.docker.com/)
+* 如果需要持久化数据需要配置 -v 磁盘文件映射
 
-<h2>商品排行榜</h2>
-
-<table>
-  <tr>
-    <th>排名</th>
-    <th>商品名</th>
-    <th>成交金额</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>西瓜</td>
-    <td>400</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>香蕉</td>
-    <td>200</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>...</td>
-    <td>...</td>
-  </tr>
-</table>
-
-</body>
-</html>
+```shell
+docker run --name rankings -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 MYSQL_DATABASE=mall -d mysql:8.0
 ```
+
+使用 IDEA 打开项目，刷新 Maven，再使用开源数据库迁移工具 Flyway 完成自动建表工作：
+
+```shell
+mvn flyway:migrate
+```
+
+项目测试：
+
+```shell
+mvn clean verify
+```
+
+运行项目：
+
+* Run Application 类
+
+* 访问 [localhost:8080//rank.htm](localhost:8080//rank.htm) 就可以可以运行了
+
+
+运行结果如下图：
+
+[![gWeouT.png](https://z3.ax1x.com/2021/05/17/gWeouT.png)](https://imgtu.com/i/gWeouT)
+
+
